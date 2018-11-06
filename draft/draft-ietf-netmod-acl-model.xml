@@ -14,25 +14,17 @@
 <!-- Change to "yes" if someone has disclosed IPR for the draft -->
 <?rfc compact="yes"?>
 <!-- This defines the specific filename and version number of your draft (and inserts the appropriate IETF boilerplate -->
-<rfc category="std" docName="draft-ietf-netmod-acl-model-19" ipr="trust200902">
+<rfc category="std" docName="draft-ietf-netmod-acl-model-21" ipr="trust200902">
   <front>
     <title abbrev="ACL YANG model">Network Access Control List (ACL) YANG Data
     Model</title>
 
     <author fullname="Mahesh Jethanandani" initials="M."
             surname="Jethanandani">
-      <organization/>
+      <organization>VMware</organization>
 
       <address>
         <email>mjethanandani@gmail.com</email>
-      </address>
-    </author>
-
-    <author fullname="Lisa Huang" initials="L." surname="Huang">
-      <organization>General Electric</organization>
-
-      <address>
-        <email>lyihuang16@gmail.com</email>
       </address>
     </author>
 
@@ -44,8 +36,14 @@
       </address>
     </author>
 
+    <author fullname="Lisa Huang" initials="L." surname="Huang">
+      <address>
+        <email>huangyi_99@yahoo.com</email>
+      </address>
+    </author>
+
     <author fullname="Dana Blair" initials="D." surname="Blair">
-      <organization>Cisco Systems, Inc.</organization>
+      <organization/>
 
       <address>
         <postal>
@@ -64,13 +62,13 @@
 
         <facsimile/>
 
-        <email>dblair@cisco.com</email>
+        <email>dana@blairhome.com</email>
 
         <uri/>
       </address>
     </author>
 
-    <date day="27" month="April" year="2018"/>
+    <date day="6" month="November" year="2018"/>
 
     <area>Operations and Management Area</area>
 
@@ -88,17 +86,16 @@
     <section anchor="intro" title="Introduction">
       <t>Access Control List (ACL) is one of the basic elements used to
       configure device forwarding behavior. It is used in many networking
-      technologies such as Policy Based Routing, Firewalls etc.</t>
+      technologies such as Policy Based Routing (PBR), firewalls etc.</t>
 
       <t>An ACL is an user-ordered set of rules, that is used to filter
       traffic on a networking device. Each rule is represented by an Access
       Control Entry (ACE).</t>
 
-      <t>Each ACE has a group of match criteria and a group of action
-      criteria.</t>
+      <t>Each ACE has a group of match criteria and a group of actions.</t>
 
-      <t>The match criteria allows for definition of packet headers and
-      metadata, all of which must be true for the match to occur.</t>
+      <t>The match criteria allow for definition of packet headers and
+      metadata, the contents of which must match the definitions.</t>
 
       <t><list style="symbols">
           <t>Packet header matches apply to fields visible in the packet such
@@ -106,11 +103,12 @@
 
           <t>In case a vendor supports it, metadata matches apply to fields
           associated with the packet but not in the packet header such as
-          input interface or overall packet length</t>
+          input interface or length of the packet as received over the
+          wire.</t>
         </list></t>
 
       <t>The actions specify what to do with the packet when the matching
-      criteria is met. These actions are any operations that would apply to
+      criteria are met. These actions are any operations that would apply to
       the packet, such as counting, policing, or simply forwarding. The list
       of potential actions is unbounded depending on the capabilities of the
       networking devices.</t>
@@ -120,13 +118,13 @@
       Access List are used interchangeably.</t>
 
       <t>The matching of filters and actions in an ACE/ACL are triggered only
-      after application/attachment of the ACL to an interface, VRF, vty/tty
-      session, QoS policy, routing protocols amongst various other config
-      attachment points. Once attached, it is used for filtering traffic using
-      the match criteria in the ACE's and taking appropriate action(s) that
-      have been configured against that ACE. In order to apply an ACL to any
-      attachment point other than an interface, vendors would have to augment
-      the ACL YANG model.</t>
+      after the application/attachment of the ACL to an interface, VRF,
+      vty/tty session, QoS policy, or routing protocols, amongst various other
+      configuration attachment points. Once attached, it is used for filtering
+      traffic using the match criteria in the ACEs and taking appropriate
+      action(s) that have been configured against that ACE. In order to apply
+      an ACL to any attachment point other than an interface, vendors would
+      have to augment the ACL YANG model.</t>
 
       <t>Editorial Note (To be removed by RFC Editor)</t>
 
@@ -145,9 +143,6 @@
           <t>Revision date in model, in the format YYYY-MM-DD needs to get
           updated with the date the draft gets approved. The date also needs
           to get reflected on the line with &lt;CODE BEGINS&gt;.</t>
-
-          <t>Replace "I-D.ietf-netmod-yang-tree-diagrams" with the assigned
-          RFC number.</t>
         </list></t>
 
       <section title="Definitions and Acronyms">
@@ -168,6 +163,8 @@
         <t>IPv6: Internet Protocol version 6</t>
 
         <t>MAC: Media Access Control</t>
+
+        <t>PBR: Policy Based Routing</t>
 
         <t>TCP: Transmission Control Protocol</t>
 
@@ -195,11 +192,14 @@
 
     <section anchor="problem" title="Problem Statement">
       <t>This document defines a <xref target="RFC7950">YANG 1.1 </xref> data
-      model for the configuration of ACLs. It is very important that model can
-      be used easily by applications/attachments.</t>
+      model for the configuration of ACLs. The model defines matching rules
+      for commonly used protocols such as, Ethernet, IPv4, IPv6, TCP, UDP and
+      ICMP. If more protocols need to be supported in the future, this base
+      model can be augmented. An example of such an augmentation can be seen
+      in the Appendix.</t>
 
       <t>ACL implementations in every device may vary greatly in terms of the
-      filter constructs and actions that they support. Therefore this draft
+      filter constructs and actions that they support. Therefore, this draft
       proposes a model that can be augmented by standard extensions and vendor
       proprietary models.</t>
     </section>
@@ -211,12 +211,12 @@
       common understanding of what Access Control List (ACL) is. A network
       system usually has a list of ACLs, and each ACL contains an ordered list
       of rules, also known as Access Control Entries (ACE). Each ACE has a
-      group of match criteria and a group of action criteria. The match
-      criteria allows for definition of packet headers or metadata, if
+      group of match criteria and a group of actions. The match criteria allow
+      for definition of contents of the packet headers or metadata, if
       supported by the vendor. Packet header matching applies to fields
       visible in the packet such as address or CoS or port numbers. Metadata
       matching applies to fields associated with the packet, but not in the
-      packet header such as input interface, packet length, or source or
+      packet header, such as input interface, packet length, or source or
       destination prefix length. The actions can be any sort of operation from
       logging to rate limiting or dropping to simply forwarding. Actions on
       the first matching ACE are applied with no processing of subsequent
@@ -238,11 +238,11 @@
       advertise match rules they are capable and willing to support. There are
       two sets of feature statements a device needs to advertise. The first
       set of feature statements specify the capability of the device. These
-      include features such as "Device can support ethernet headers" or
-      "Device can support of IPv4 headers". The second set of feature
-      statements specify the combinations of headers the device is willing to
-      support. These include features such as "Plain IPv6 ACL supported" or
-      "Ethernet, IPv4 and IPv6 ACL combinations supported".</t>
+      include features such as "Device can support matching on Ethernet
+      headers" or "Device can support matching on IPv4 headers". The second
+      set of feature statements specify the combinations of headers the device
+      is willing to support. These include features such as "Plain IPv6 ACL
+      supported" or "Ethernet, IPv4 and IPv6 ACL combinations supported".</t>
 
       <section anchor="aclmodules" title="ACL Modules">
         <t>There are two YANG modules in the model. The first module,
@@ -322,7 +322,7 @@ INSERT_TEXT_FROM_FILE(../src/yang/ietf-access-control-list@YYYY-MM-DD.yang)
         header fields. Those fields can be used in conjunction with any of the
         above layer 2 or layer 3 fields.</t>
 
-        <t>Since the number of match criteria is very large, the base draft
+        <t>Since the number of match criteria are very large, the base draft
         does not include these directly but references them by 'uses'
         statement to keep the base module simple. In case more match
         conditions are needed, those can be added by augmenting choices within
@@ -331,13 +331,14 @@ INSERT_TEXT_FROM_FILE(../src/yang/ietf-access-control-list@YYYY-MM-DD.yang)
         <t>This module imports definitions from <xref target="RFC6991">Common
         YANG Data Types</xref> and references <xref
         target="RFC0791">IP</xref>, <xref target="RFC0792">ICMP</xref>, <xref
-        target="RFC2474">Definition of the Differentiated Services Field in
-        the IPv4 and IPv6 Headers</xref>, <xref target="RFC3168">The Addition
-        of Explicit Congestion Notification (ECN) to IP</xref>, , <xref
-        target="RFC4007">IPv6 Scoped Address Architecture</xref>, <xref
-        target="RFC4291">IPv6 Addressing Architecture</xref>, <xref
-        target="RFC5952">A Recommendation for IPv6 Address Text
-        Representation</xref>, <xref target="RFC8200">IPv6</xref>.</t>
+        target="RFC0793">TCP</xref>, <xref target="RFC2474">Definition of the
+        Differentiated Services Field in the IPv4 and IPv6 Headers</xref>,
+        <xref target="RFC3168">The Addition of Explicit Congestion
+        Notification (ECN) to IP</xref>, , <xref target="RFC4007">IPv6 Scoped
+        Address Architecture</xref>, <xref target="RFC4291">IPv6 Addressing
+        Architecture</xref>, <xref target="RFC5952">A Recommendation for IPv6
+        Address Text Representation</xref>, <xref
+        target="RFC8200">IPv6</xref>.</t>
 
         <figure>
           <artwork><![CDATA[
@@ -351,7 +352,7 @@ INSERT_TEXT_FROM_FILE(../src/yang/ietf-packet-fields@YYYY-MM-DD.yang)
 
       <!--pktheaders-->
 
-      <section anchor="example" title="An ACL Example">
+      <section anchor="example" title="ACL Examples">
         <t>Requirement: Deny tcp traffic from 192.0.2.0/24, destined to
         198.51.100.0/24.</t>
 
@@ -441,7 +442,7 @@ INSERT_TEXT_FROM_FILE(../src/yang/example-acl-configuration-4.4.4.xml)
       transport layer and the mandatory-to-implement secure transport is <xref
       target="RFC6242">SSH</xref>. The lowest RESTCONF layer is HTTPS, and the
       mandatory-to-implement secure transport is <xref
-      target="RFC5246">TLS</xref>.</t>
+      target="RFC8446">TLS</xref>.</t>
 
       <t>The NETCONF Access Control Model (<xref target="RFC8341">NACM</xref>)
       provides the means to restrict access for particular NETCONF users to a
@@ -461,10 +462,19 @@ INSERT_TEXT_FROM_FILE(../src/yang/example-acl-configuration-4.4.4.xml)
       <t><list style="hanging">
           <t>/acls/acl/aces: This list specifies all the configured access
           control entries on the device. Unauthorized write access to this
-          list can allow intruders to access and control the system.
-          Unauthorized read access to this list can allow intruders to spoof
-          packets with authorized addresses thereby compromising the
-          system.</t>
+          list can allow intruders to modify the entries so as to permit
+          traffic that should not be permitted, or deny traffic that should be
+          permitted. The former may result in a DoS attack, or compromise the
+          device. The latter may result in a DoS attack. The impact of an
+          unauthorized read access of the list will allow the attacker to
+          determine which rules are in effect, to better craft an attack.</t>
+
+          <t>/acls/acl/aces/ace/actions/logging: This node specifies ability
+          to log packets that match this ace entry. Unauthorized write access
+          to this node can allow intruders to enable logging on one or many
+          ace entries, overwhelming the server in the process. Unauthorized
+          read access of this node can allow intruders to access logging
+          information, which could be used to craft an attack the server.</t>
         </list></t>
     </section>
 
@@ -542,6 +552,8 @@ reference: RFC XXXX]]></artwork>
 
       <?rfc include='reference.RFC.0792'?>
 
+      <?rfc include='reference.RFC.0793'?>
+
       <?rfc include='reference.RFC.2119'?>
 
       <?rfc include='reference.RFC.2474'?>
@@ -568,7 +580,7 @@ reference: RFC XXXX]]></artwork>
     <references title="Informative References">
       <?rfc include='reference.RFC.3688'?>
 
-      <?rfc include='reference.RFC.5246'?>
+      <?rfc include='reference.RFC.8446'?>
 
       <?rfc include='reference.RFC.6020'?>
 
@@ -591,9 +603,9 @@ reference: RFC XXXX]]></artwork>
       <section anchor="newcoacl" title="A company proprietary module example">
         <t>Module "example-newco-acl" is an example of company proprietary
         model that augments "ietf-acl" module. It shows how to use 'augment'
-        with an XPath expression to add additional match criteria, action
-        criteria, and default actions when no ACE matches are found. All these
-        are company proprietary extensions or system feature extensions.
+        with an XPath expression to add additional match criteria, actions,
+        and default actions for when no ACE matches are found. All these are
+        company proprietary extensions or system feature extensions.
         "example-newco-acl" is just an example and it is expected that vendors
         will create their own proprietary models.</t>
 

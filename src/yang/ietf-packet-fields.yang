@@ -500,7 +500,9 @@ module ietf-packet-fields {
     }
 
     leaf options {
-      type uint32;
+      type binary {
+	length "1..40";
+      }
       description
         "The length of this field is determined by the
          data offset field. Options have up to three
@@ -553,20 +555,34 @@ module ietf-packet-fields {
       description
         "Also known as Control messages.";
       reference
-        "RFC 792: Internet Control Message Protocol (ICMP).";
+        "RFC 792: Internet Control Message Protocol (ICMP),
+         RFC 4443: Internet Control Message Protocol (ICMPv6)
+                   for Internet Protocol Version 6 (IPv6)
+                   Specifciation.";
     }
 
     leaf code {
       type uint8;
       description
         "ICMP subtype. Also known as Control messages.";
+      reference
+        "RFC 792: Internet Control Message Protocol (ICMP),
+         RFC 4443: Internet Control Message Protocol (ICMPv6)
+                   for Internet Protocol Version 6 (IPv6)
+                   Specifciation.";
     }
 
     leaf rest-of-header {
-      type uint32;
+      type binary;
       description
-        "Four-bytes field, contents vary based on the
-         ICMP type and code.";
+        "Unbounded in length, the contents vary based on the
+         ICMP type and code. Also referred to as 'Message Body'
+         in ICMPv6.";
+      reference
+        "RFC 792: Internet Control Message Protocol (ICMP),
+         RFC 4443: Internet Control Message Protocol (ICMPv6)
+                   for Internet Protocol Version 6 (IPv6)
+                   Specifciation.";
     }
   }
 }

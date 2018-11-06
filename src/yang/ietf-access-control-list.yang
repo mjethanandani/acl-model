@@ -40,7 +40,7 @@ module ietf-access-control-list {
 
   description
     "This YANG module defines a component that describe the
-     configuration of Access Control Lists (ACLs).
+     configuration and monitoring of Access Control Lists (ACLs).
 
      Copyright (c) 2018 IETF Trust and the persons identified as
      the document authors.  All rights reserved.
@@ -210,17 +210,17 @@ module ietf-access-control-list {
 
   feature match-on-tcp {
     description
-      "The device can support TCP headers.";
+      "The device can support matching on TCP headers.";
   }
 
   feature match-on-udp {
     description
-      "The device can support UDP header.";
+      "The device can support matching on UDP headers.";
   }
 
   feature match-on-icmp {
     description
-      "The device can support ICMP header.";
+      "The device can support matching on ICMP (v4 and v6) headers.";
   }
   
   /*
@@ -313,16 +313,18 @@ module ietf-access-control-list {
          entry.
 
          An implementation should provide this counter on a
-         per-interface per-ACL-entry if possible.
+         per-interface per-ACL-entry basis if possible.
 
-         If an implementation only supports ACL counters per entry
-         (i.e., not broken out per interface), then the value
-         should be equal to the aggregate count across all interfaces.
+         If an implementation only supports ACL counters on a per
+         entry basis (i.e., not broken out per interface), then the
+         value should be equal to the aggregate count across all
+         interfaces.
 
-         An implementation that provides counters per entry per
-         interface is not required to also provide an aggregate count,
-         e.g., per entry -- the user is expected to be able implement
-         the required aggregation if such a count is needed.";
+         An implementation that provides counters on a per entry per
+         interface basis is not required to also provide an aggregate
+         count, e.g., per entry -- the user is expected to be able
+         implement the required aggregation if such a count is
+         needed.";
     }
 
     leaf matched-octets {
@@ -347,7 +349,7 @@ module ietf-access-control-list {
   }
 
   /*
-   * Configuration data nodes
+   * Configuration and monitoring data nodes
    */
   container acls {
     description

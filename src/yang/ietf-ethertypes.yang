@@ -142,7 +142,7 @@ module ietf-ethertypes {
         enum cobranet {
           value 34841;
           description
-            "CobraNet. Hex value of 0x";
+            "CobraNet. Hex value of 0x8819";
         }
         enum mpls-unicast {
           value 34887;
